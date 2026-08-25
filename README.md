@@ -7,6 +7,7 @@ This repository is a Codex plugin marketplace containing the `oclic-skills` plug
 - `analyze-class` — analyze one class or use `--deep` for all classes, endpoints, and controllers.
 - `analyze-component` — analyze one Razor item or use `--deep` for all `.razor` and `.cshtml` UI.
 - `method-analyze` — recursively trace an application-owned method.
+- `commit` — categorize changes and run `Commit`, `CommitAndPush`, or project-aware `CommitAndDeploy` workflows.
 - `document` — persist verified application knowledge into the project's documentation store.
 - `handoff` — transfer bounded work and context between Codex tasks or projects.
 

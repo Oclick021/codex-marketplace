@@ -1,0 +1,4 @@
+interface:
+  display_name: "AnalyzeMethod"
+  short_description: "Trace application methods from an entry point"
+  default_prompt: "Use $method-analyze to trace the complete flow of Namespace.Class.Method()."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Handoff"
+  short_description: "Transfer context and work between Codex tasks"
+  default_prompt: "Use $handoff to transfer this matter to another Codex task with the context and return behavior I specify."

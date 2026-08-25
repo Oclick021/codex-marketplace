@@ -1,0 +1,4 @@
+interface:
+  display_name: "AnalyzeClass"
+  short_description: "Analyze one class or deeply inventory classes and endpoints"
+  default_prompt: "Use $analyze-class to assess Namespace.Class, or add --deep to inventory and analyze all classes, endpoints, and controllers."

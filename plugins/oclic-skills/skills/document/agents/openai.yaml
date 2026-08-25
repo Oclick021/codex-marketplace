@@ -1,0 +1,7 @@
+interface:
+  display_name: "Document"
+  short_description: "Persist chat knowledge into project documentation"
+  default_prompt: "Use $document to persist the durable application knowledge learned in this chat."
+
+policy:
+  allow_implicit_invocation: true

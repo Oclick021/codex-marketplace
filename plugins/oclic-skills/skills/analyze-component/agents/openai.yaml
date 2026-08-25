@@ -1,0 +1,4 @@
+interface:
+  display_name: "AnalyzeComponent"
+  short_description: "Analyze one Razor item or deeply inventory all Razor UI"
+  default_prompt: "Use $analyze-component to trace a Razor item, or add --deep to inventory and analyze all .razor and .cshtml pages, components, and views."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CommitAndPush"
+  short_description: "Create categorized commits and push safely"
+  default_prompt: "Use $commit-and-push to categorize my current changes, commit them, and push the current branch safely."

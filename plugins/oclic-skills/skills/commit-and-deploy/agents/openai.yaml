@@ -1,0 +1,4 @@
+interface:
+  display_name: "CommitAndDeploy"
+  short_description: "Version, commit, and deploy by project rules"
+  default_prompt: "Use $commit-and-deploy to prepare these changes and run this project's verified deployment procedure."

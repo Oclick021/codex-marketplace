@@ -1,4 +1,4 @@
 interface:
   display_name: "Commit"
-  short_description: "Create categorized commits, push, or deploy"
-  default_prompt: "Use $commit to review and categorize my current changes, then perform the requested Commit, CommitAndPush, or CommitAndDeploy workflow."
+  short_description: "Create focused, categorized local commits"
+  default_prompt: "Use $commit to review and categorize my current changes into focused local commits."

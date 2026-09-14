@@ -12,6 +12,10 @@ This repository is a Codex plugin marketplace containing the `oclic-skills` plug
 - `commit-and-deploy` — version, commit, and deploy through the project's verified release procedure.
 - `document` — persist verified application knowledge into the project's documentation store.
 - `handoff` — transfer bounded work and context between Codex tasks or projects.
+- `delegate` — send the current request to a separate Codex task and wait for its report.
+- `delegate-continue` — send the current request to a separate task and continue chatting without waiting.
+- `delegate-sub` — assign the current request to a child subagent and wait for its report.
+- `delegate-sub-continue` — assign the current request to a child subagent and continue without waiting.
 
 ## Install from a cloned repository
 

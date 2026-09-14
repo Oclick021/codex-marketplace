@@ -1,0 +1,4 @@
+interface:
+  display_name: "delegate-continue"
+  short_description: "Delegate work using delegate-continue"
+  default_prompt: "Use $delegate-continue to delegate the current request in this mode."

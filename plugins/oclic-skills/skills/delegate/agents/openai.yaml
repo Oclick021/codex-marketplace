@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delegate"
+  short_description: "Delegate current work to another Codex agent"
+  default_prompt: "Delegate the current requested work to another agent and report the outcome."

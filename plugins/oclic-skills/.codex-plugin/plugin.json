@@ -1,19 +1,19 @@
 {
   "name": "oclic-skills",
   "version": "0.1.2",
-  "description": "Codebase analysis, commit workflows, and durable documentation skills for Codex.",
+  "description": "Codebase analysis, commit workflows, delegation, and durable documentation skills for Codex.",
   "author": {
     "name": "Oclick021",
     "url": "https://github.com/Oclick021"
   },
   "homepage": "https://github.com/Oclick021/codex-marketplace",
   "repository": "https://github.com/Oclick021/codex-marketplace",
-  "keywords": ["codex", "analysis", "commit", "deployment", "razor", "documentation", "handoff"],
+  "keywords": ["codex", "analysis", "commit", "deployment", "razor", "documentation", "handoff", "delegation", "agents"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Oclic Skills",
-    "shortDescription": "Analyze code, manage commits, and preserve knowledge.",
-    "longDescription": "Adds deep class, endpoint, Razor UI, and method analysis; categorized commit, push, and deployment workflows; durable project documentation; and task handoff workflows.",
+    "shortDescription": "Analyze code, manage commits, delegate work, and preserve knowledge.",
+    "longDescription": "Adds deep class, endpoint, Razor UI, and method analysis; categorized commit, push, and deployment workflows; durable project documentation; task handoff; and separate-task or subagent delegation with wait and continue modes.",
     "developerName": "oclic",
     "category": "Productivity",
     "capabilities": ["Write"],

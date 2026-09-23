@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stage"
+  short_description: "Group related changes and stage them"
+  default_prompt: "Use $stage to review my current changes, group related pieces, and stage each coherent group without committing."

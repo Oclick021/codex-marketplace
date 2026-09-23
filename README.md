@@ -8,6 +8,7 @@ This repository is a Codex plugin marketplace containing the `oclic-skills` plug
 - `analyze-component` — analyze one Razor item or use `--deep` for all `.razor` and `.cshtml` UI.
 - `method-analyze` — recursively trace an application-owned method.
 - `commit` — categorize repository changes into focused local commits.
+- `stage` — group related changes and stage coherent pieces without committing.
 - `commit-and-push` — create categorized commits and push the current branch safely.
 - `commit-and-deploy` — version, commit, and deploy through the project's verified release procedure.
 - `document` — persist verified application knowledge into the project's documentation store.

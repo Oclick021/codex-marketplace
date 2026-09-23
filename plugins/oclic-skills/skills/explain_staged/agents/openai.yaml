@@ -1,0 +1,4 @@
+interface:
+  display_name: "ExplainStaged"
+  short_description: "Explain staged changes and how they work"
+  default_prompt: "Use $explain_staged to explain what is staged, how it works, and how the staged pieces relate."

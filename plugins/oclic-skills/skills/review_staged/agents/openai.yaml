@@ -1,0 +1,4 @@
+interface:
+  display_name: "ReviewStaged"
+  short_description: "Review staged changes for actionable issues"
+  default_prompt: "Use $review_staged to review my staged changes for concrete bugs, regressions, and risks."

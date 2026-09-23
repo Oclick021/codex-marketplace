@@ -26,11 +26,13 @@ Use the available Codex task/thread creation capability for separate-task varian
 
 ## Model and work allocation
 
-Choose settings by complexity, while never exceeding `gpt-5.6-sol` at medium reasoning:
+Choose the highest available model generation, then use the least expensive model and reasoning level that can complete the task reliably. For the current model family, use `gpt-6-luna`, `gpt-6-sol`, and `gpt-6-astra` only with low or medium reasoning:
 
-- Straightforward, narrow work: use `gpt-5.6-luna` with low or medium reasoning when available.
-- Multi-file implementation, nuanced analysis, or work with meaningful integration concerns: use `gpt-5.6-sol` with medium reasoning.
-- If the task appears to need more capability, still cap it at `gpt-5.6-sol` and medium reasoning; divide it into bounded work items or identify the limitation in the handoff. Never select a higher model or reasoning effort.
+- Straightforward, narrow work: use `gpt-6-luna` with low reasoning. Raise to medium only when the task needs more careful reasoning.
+- Multi-file implementation, nuanced analysis, or meaningful integration concerns: use `gpt-6-sol` with low reasoning for routine work and medium when complexity warrants it.
+- Use `gpt-6-astra` with low or medium reasoning only when Luna or Sol is unlikely to handle the task reliably; prefer medium for especially difficult reasoning within this skill's effort cap.
+- Do not select an older model when a suitable `gpt-6` model is available. If a `gpt-6` model is unavailable, use the newest available Luna or Sol model that can do the job, preferring the more token-efficient option when capability is sufficient.
+- Never exceed medium reasoning. If the task appears to need more capability, divide it into bounded work items or identify the limitation in the handoff.
 - If a tool offers only a default model and no supported override, use that tool's default rather than inventing an unsupported setting, and keep the prompt/task scope appropriately bounded.
 
 For several independent work items, delegate them concurrently when they do not touch overlapping files, shared state, or dependent decisions. Give each agent a clear ownership boundary. If work has dependencies or likely collisions, sequence it: tell later agents what output to wait for and pass along the necessary result before they proceed. Avoid parallel work that would cause conflicting edits. The caller remains responsible for integrating reports and identifying conflicts; do not redo delegated implementation unless the user requests it or integration requires a specific caller-side fix.

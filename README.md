@@ -7,6 +7,7 @@ This repository is a Codex plugin marketplace containing the `oclic-skills` plug
 - `analyze-class` — analyze one class or use `--deep` for all classes, endpoints, and controllers.
 - `analyze-component` — analyze one Razor item or use `--deep` for all `.razor` and `.cshtml` UI.
 - `method-analyze` — recursively trace an application-owned method.
+- `flowchart-designer` — map code flows or design proposed changes as editable Mermaid diagrams linked to source.
 - `commit` — categorize repository changes into focused local commits.
 - `stage` — group related changes and stage coherent pieces without committing.
 - `explain_staged` — explain staged changes, how they work, and how they relate.

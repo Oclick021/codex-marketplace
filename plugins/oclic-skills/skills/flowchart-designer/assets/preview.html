@@ -96,19 +96,21 @@
   root.querySelector(".flowchart-save").addEventListener("click", async () => {
     if (!editingStep) return;
     const step = editingStep;
-    annotations[step] = note.value;
-    try { localStorage.setItem(storageKey, JSON.stringify({ sourceHash: payload.sourceHash, annotations })); } catch {}
-    if (typeof window.openai?.setWidgetState === "function") {
-      await window.openai.setWidgetState({ modelContent: { sourceHash: payload.sourceHash, annotations }, privateContent: null }).catch(() => {});
-    }
-    markAnnotations();
-    closeEditor();
-    const prompt = `Update the editable Mermaid source ${payload.path}: set the %% @annotation JSON comment for step ${step} to ${JSON.stringify(annotations[step])}, preserving every other step ID, source mapping, and user edit. Rebuild and show the preview from that same .mmd file. This annotation is feedback for the flow: ${annotations[step]}`;
+    const proposed = note.value;
+    const prompt = `Update the editable Mermaid source ${payload.path}: set the %% @annotation JSON comment for step ${step} to ${JSON.stringify(proposed)}, preserving every other step ID, source mapping, and user edit. Rebuild and show the preview inline from that same .mmd file. This annotation is feedback for the flow: ${proposed}`;
     try {
       const sent = await requestCodex(prompt, `Save flowchart annotation ${step}`);
-      setStatus(sent ? `Annotation ${step} sent to Codex for source-file persistence.` : `Annotation ${step} saved in this browser; ask Codex to apply it to the .mmd source.`);
+      if (!sent) { setStatus(`Cannot save annotation ${step}: this inline surface cannot send feedback to Codex.`); return; }
+      annotations[step] = proposed;
+      try { localStorage.setItem(storageKey, JSON.stringify({ sourceHash: payload.sourceHash, annotations })); } catch {}
+      if (typeof window.openai?.setWidgetState === "function") {
+        await window.openai.setWidgetState({ modelContent: { sourceHash: payload.sourceHash, annotations }, privateContent: null }).catch(() => {});
+      }
+      markAnnotations();
+      closeEditor();
+      setStatus(`Annotation ${step} sent to Codex for source-file persistence.`);
     } catch {
-      setStatus(`Annotation ${step} saved in this browser; ask Codex to apply it to the .mmd source.`);
+      setStatus(`Cannot save annotation ${step}: feedback could not reach Codex.`);
     }
   });
 

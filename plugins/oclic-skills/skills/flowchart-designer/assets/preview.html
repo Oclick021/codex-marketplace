@@ -1,0 +1,166 @@
+<div id="__FLOWCHART_ID__" class="flowchart-preview">
+  <div class="flowchart-canvas" aria-label="Interactive code flowchart"></div>
+  <div class="flowchart-help">Hover a node to trace its outgoing lines. Right-click a node to annotate it. Click a blue source reference to ask Codex to open the file.</div>
+  <div class="flowchart-editor" hidden>
+    <label class="flowchart-editor-label" for="__FLOWCHART_ID__-note"></label>
+    <textarea id="__FLOWCHART_ID__-note" rows="4"></textarea>
+    <div class="flowchart-actions"><button type="button" class="flowchart-save">Save and send to Codex</button><button type="button" class="flowchart-cancel">Cancel</button></div>
+  </div>
+  <div class="flowchart-status" role="status" aria-live="polite"></div>
+</div>
+<style>
+  #__FLOWCHART_ID__ { position: relative; color: var(--foreground); background: var(--background); }
+  #__FLOWCHART_ID__ .flowchart-canvas { overflow: auto; }
+  #__FLOWCHART_ID__ .flowchart-canvas svg { max-width: 100%; height: auto; }
+  #__FLOWCHART_ID__ .source-ref { color: var(--blue); font-size: 0.82em; cursor: pointer; text-decoration: underline; }
+  #__FLOWCHART_ID__ .node.is-hovered rect,
+  #__FLOWCHART_ID__ .node.is-hovered polygon,
+  #__FLOWCHART_ID__ .node.is-hovered path { filter: drop-shadow(0 0 7px var(--blue)); stroke: var(--blue) !important; stroke-width: 2.5px !important; }
+  #__FLOWCHART_ID__ .edgePath.is-outgoing path,
+  #__FLOWCHART_ID__ path.flowchart-link.is-outgoing { stroke: var(--blue) !important; stroke-width: 3px !important; filter: drop-shadow(0 0 5px var(--blue)); }
+  #__FLOWCHART_ID__ .node.has-annotation rect,
+  #__FLOWCHART_ID__ .node.has-annotation polygon { stroke: var(--purple) !important; stroke-width: 2px !important; }
+  #__FLOWCHART_ID__ .node.edited rect,
+  #__FLOWCHART_ID__ .node.edited polygon,
+  #__FLOWCHART_ID__ .node.edited path { fill: color-mix(in srgb, var(--yellow) 30%, var(--background)) !important; }
+  #__FLOWCHART_ID__ .node.added rect,
+  #__FLOWCHART_ID__ .node.added polygon,
+  #__FLOWCHART_ID__ .node.added path { fill: color-mix(in srgb, var(--green) 30%, var(--background)) !important; }
+  #__FLOWCHART_ID__ .flowchart-help { color: var(--muted-foreground); font-size: 12px; margin: 4px 0; }
+  #__FLOWCHART_ID__ .flowchart-editor { position: absolute; z-index: 5; width: min(300px, 90%); padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--popover); color: var(--popover-foreground); box-shadow: 0 8px 24px #0003; }
+  #__FLOWCHART_ID__ .flowchart-editor[hidden] { display: none; }
+  #__FLOWCHART_ID__ .flowchart-editor-label { display: block; margin-bottom: 6px; }
+  #__FLOWCHART_ID__ textarea { box-sizing: border-box; width: 100%; resize: vertical; color: var(--foreground); background: var(--background); border: 1px solid var(--input); }
+  #__FLOWCHART_ID__ .flowchart-actions { display: flex; gap: 8px; margin-top: 8px; }
+  #__FLOWCHART_ID__ button { cursor: pointer; }
+  #__FLOWCHART_ID__ .flowchart-status { min-height: 1.2em; color: var(--muted-foreground); font-size: 12px; }
+</style>
+<script type="module">
+  const payload = __FLOWCHART_PAYLOAD__;
+  const root = document.getElementById("__FLOWCHART_ID__");
+  const canvas = root.querySelector(".flowchart-canvas");
+  const editor = root.querySelector(".flowchart-editor");
+  const note = root.querySelector("textarea");
+  const label = root.querySelector(".flowchart-editor-label");
+  const status = root.querySelector(".flowchart-status");
+  const storageKey = `flowchart-annotations:${payload.path}`;
+  let annotations = { ...payload.annotations };
+  let editingStep = null;
+
+  function savedAnnotations() {
+    const host = window.openai?.widgetState?.modelContent;
+    if (host?.sourceHash === payload.sourceHash && host.annotations && typeof host.annotations === "object") return host.annotations;
+    try {
+      const local = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      return local.sourceHash === payload.sourceHash ? local.annotations || {} : {};
+    } catch { return {}; }
+  }
+  annotations = { ...payload.annotations, ...savedAnnotations() };
+  function setStatus(message) { status.textContent = message; }
+  function theme(name, fallback) {
+    return getComputedStyle(root).getPropertyValue(name).trim() || fallback;
+  }
+  function stepGroup(step) {
+    return [...canvas.querySelectorAll("g.node")].find(group =>
+      group.getAttribute("data-id") === step ||
+      group.id.startsWith(`flowchart-${step}-`) ||
+      group.textContent.trim().startsWith(`${step}:`));
+  }
+  function outgoing(step) {
+    return [...canvas.querySelectorAll(".edgePath, path.flowchart-link")].filter(edge =>
+      edge.classList.contains(`LS-${step}`) || edge.getAttribute("data-source") === step);
+  }
+  function markAnnotations() {
+    for (const step of Object.keys(payload.nodes)) {
+      const group = stepGroup(step);
+      if (group) group.classList.toggle("has-annotation", !!annotations[step]?.trim());
+    }
+  }
+  function openEditor(step, event) {
+    editingStep = step;
+    label.textContent = `Annotation for ${step}`;
+    note.value = annotations[step] || "";
+    editor.hidden = false;
+    const bounds = root.getBoundingClientRect();
+    editor.style.left = `${Math.max(0, Math.min(event.clientX - bounds.left, bounds.width - 310))}px`;
+    editor.style.top = `${Math.max(0, event.clientY - bounds.top)}px`;
+    note.focus();
+  }
+  function closeEditor() { editor.hidden = true; editingStep = null; }
+  async function requestCodex(prompt, title) {
+    if (typeof window.openai?.sendFollowUpMessage !== "function") return false;
+    await window.openai.sendFollowUpMessage({ prompt, title });
+    return true;
+  }
+  root.querySelector(".flowchart-cancel").addEventListener("click", closeEditor);
+  root.querySelector(".flowchart-save").addEventListener("click", async () => {
+    if (!editingStep) return;
+    const step = editingStep;
+    annotations[step] = note.value;
+    try { localStorage.setItem(storageKey, JSON.stringify({ sourceHash: payload.sourceHash, annotations })); } catch {}
+    if (typeof window.openai?.setWidgetState === "function") {
+      await window.openai.setWidgetState({ modelContent: { sourceHash: payload.sourceHash, annotations }, privateContent: null }).catch(() => {});
+    }
+    markAnnotations();
+    closeEditor();
+    const prompt = `Update the editable Mermaid source ${payload.path}: set the %% @annotation JSON comment for step ${step} to ${JSON.stringify(annotations[step])}, preserving every other step ID, source mapping, and user edit. Rebuild and show the preview from that same .mmd file. This annotation is feedback for the flow: ${annotations[step]}`;
+    try {
+      const sent = await requestCodex(prompt, `Save flowchart annotation ${step}`);
+      setStatus(sent ? `Annotation ${step} sent to Codex for source-file persistence.` : `Annotation ${step} saved in this browser; ask Codex to apply it to the .mmd source.`);
+    } catch {
+      setStatus(`Annotation ${step} saved in this browser; ask Codex to apply it to the .mmd source.`);
+    }
+  });
+
+  try {
+    const { default: mermaid } = await import("https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs");
+    mermaid.initialize({ startOnLoad: false, securityLevel: "loose", flowchart: { htmlLabels: true }, theme: "base", themeVariables: {
+      background: theme("--background", "#ffffff"),
+      primaryColor: theme("--background", "#ffffff"),
+      primaryTextColor: theme("--foreground", "#111111"),
+      primaryBorderColor: theme("--border", "#777777"),
+      lineColor: theme("--muted-foreground", "#777777"),
+      secondaryColor: theme("--yellow", "#facc15"),
+      tertiaryColor: theme("--green", "#22c55e")
+    } });
+    const rendered = await mermaid.render(`diagram-${root.id}`, payload.source);
+    canvas.innerHTML = rendered.svg;
+    rendered.bindFunctions?.(canvas);
+    const issues = [];
+    if (canvas.querySelectorAll("g.node").length !== Object.keys(payload.nodes).length) {
+      issues.push("Some rendered nodes lack %% @node source metadata.");
+    }
+    for (const [step, meta] of Object.entries(payload.nodes)) {
+      const group = stepGroup(step);
+      if (!group) { issues.push(`Step ${step} is missing from the rendered diagram.`); continue; }
+      group.addEventListener("pointerenter", () => {
+        group.classList.add("is-hovered");
+        for (const edge of outgoing(step)) edge.classList.add("is-outgoing");
+      });
+      group.addEventListener("pointerleave", () => {
+        group.classList.remove("is-hovered");
+        for (const edge of outgoing(step)) edge.classList.remove("is-outgoing");
+      });
+      group.addEventListener("contextmenu", event => { event.preventDefault(); openEditor(step, event); });
+      const sourceRef = group.querySelector(".source-ref");
+      if (sourceRef) {
+        sourceRef.setAttribute("title", meta.code.map(ref => `${ref.path}:${ref.line ?? "planned"}`).join("\n"));
+        sourceRef.setAttribute("role", "button");
+        sourceRef.setAttribute("aria-label", `Ask Codex to open source for ${step}`);
+        sourceRef.addEventListener("click", async event => {
+          event.stopPropagation();
+          const ref = meta.code.find(item => item.line);
+          if (!ref) { setStatus(`Step ${step} has a planned code target, not an existing source line.`); return; }
+          const sent = await requestCodex(`Open ${ref.path} at line ${ref.line} for flowchart step ${step}.`, `Open source for ${step}`);
+          setStatus(sent ? `Asked Codex to open ${ref.path}:${ref.line}.` : `Source: ${ref.path}:${ref.line}.`);
+        });
+      } else {
+        issues.push(`Step ${step} needs a blue .source-ref label in its Mermaid node.`);
+      }
+    }
+    markAnnotations();
+    if (issues.length) setStatus(issues.join(" "));
+  } catch (error) {
+    setStatus(`Could not render the Mermaid diagram: ${error.message}`);
+  }
+</script>

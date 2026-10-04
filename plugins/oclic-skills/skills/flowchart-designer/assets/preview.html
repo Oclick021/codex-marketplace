@@ -1,18 +1,23 @@
 <div id="__FLOWCHART_ID__" class="flowchart-preview">
+  <div class="flowchart-toolbar"><strong>Flowchart feedback</strong><span class="flowchart-pending">No unsent annotations</span><button type="button" class="flowchart-submit">Submit annotations to chat</button></div>
   <div class="flowchart-canvas" aria-label="Interactive code flowchart"></div>
-  <div class="flowchart-help">Hover a node to trace its outgoing lines. Right-click a node to annotate it. Click a blue source reference to ask Codex to open the file.</div>
+  <div class="flowchart-help">Hover a node to trace its outgoing lines. Right-click a node to annotate it. Submit saved annotations when ready. Click a blue source reference to ask Codex to open the file.</div>
   <div class="flowchart-editor" hidden>
     <label class="flowchart-editor-label" for="__FLOWCHART_ID__-note"></label>
     <textarea id="__FLOWCHART_ID__-note" rows="4"></textarea>
-    <div class="flowchart-actions"><button type="button" class="flowchart-save">Save and send to Codex</button><button type="button" class="flowchart-cancel">Cancel</button></div>
+    <div class="flowchart-actions"><button type="button" class="flowchart-save">Save annotation</button><button type="button" class="flowchart-cancel">Cancel</button></div>
   </div>
+  <div class="flowchart-export" hidden><label for="__FLOWCHART_ID__-export">Copy this feedback into the Codex chat:</label><textarea id="__FLOWCHART_ID__-export" readonly rows="8"></textarea></div>
   <div class="flowchart-status" role="status" aria-live="polite"></div>
 </div>
 <style>
   #__FLOWCHART_ID__ { position: relative; color: var(--foreground); background: var(--background); }
+  #__FLOWCHART_ID__ .flowchart-toolbar { position: sticky; top: 0; z-index: 4; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 0; background: var(--background); border-bottom: 1px solid var(--border); }
+  #__FLOWCHART_ID__ .flowchart-pending { margin-left: auto; color: var(--muted-foreground); font-size: 12px; }
   #__FLOWCHART_ID__ .flowchart-canvas { overflow: auto; }
-  #__FLOWCHART_ID__ .flowchart-canvas svg { max-width: 100%; height: auto; }
-  #__FLOWCHART_ID__ .source-ref { color: var(--blue); font-size: 0.82em; cursor: pointer; text-decoration: underline; }
+  #__FLOWCHART_ID__ .flowchart-canvas svg { min-width: 100%; max-width: none; height: auto; }
+  #__FLOWCHART_ID__ .source-ref,
+  #__FLOWCHART_ID__ .node small { color: var(--blue); font-size: 0.82em; cursor: pointer; text-decoration: underline; }
   #__FLOWCHART_ID__ .node.is-hovered rect,
   #__FLOWCHART_ID__ .node.is-hovered polygon,
   #__FLOWCHART_ID__ .node.is-hovered path { filter: drop-shadow(0 0 7px var(--blue)); stroke: var(--blue) !important; stroke-width: 2.5px !important; }
@@ -29,6 +34,9 @@
   #__FLOWCHART_ID__ .flowchart-help { color: var(--muted-foreground); font-size: 12px; margin: 4px 0; }
   #__FLOWCHART_ID__ .flowchart-editor { position: absolute; z-index: 5; width: min(300px, 90%); padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--popover); color: var(--popover-foreground); box-shadow: 0 8px 24px #0003; }
   #__FLOWCHART_ID__ .flowchart-editor[hidden] { display: none; }
+  #__FLOWCHART_ID__ .flowchart-export[hidden] { display: none; }
+  #__FLOWCHART_ID__ .flowchart-export { margin-top: 10px; }
+  #__FLOWCHART_ID__ .flowchart-export textarea { box-sizing: border-box; width: 100%; color: var(--foreground); background: var(--background); }
   #__FLOWCHART_ID__ .flowchart-editor-label { display: block; margin-bottom: 6px; }
   #__FLOWCHART_ID__ textarea { box-sizing: border-box; width: 100%; resize: vertical; color: var(--foreground); background: var(--background); border: 1px solid var(--input); }
   #__FLOWCHART_ID__ .flowchart-actions { display: flex; gap: 8px; margin-top: 8px; }
@@ -43,20 +51,39 @@
   const note = root.querySelector("textarea");
   const label = root.querySelector(".flowchart-editor-label");
   const status = root.querySelector(".flowchart-status");
+  const pendingLabel = root.querySelector(".flowchart-pending");
+  const exportPanel = root.querySelector(".flowchart-export");
+  const exportText = exportPanel.querySelector("textarea");
   const storageKey = `flowchart-annotations:${payload.path}`;
   let annotations = { ...payload.annotations };
+  let pending = {};
   let editingStep = null;
 
-  function savedAnnotations() {
+  function savedState() {
     const host = window.openai?.widgetState?.modelContent;
-    if (host?.sourceHash === payload.sourceHash && host.annotations && typeof host.annotations === "object") return host.annotations;
+    if (host?.sourceHash === payload.sourceHash && host.annotations && typeof host.annotations === "object") return host;
     try {
       const local = JSON.parse(localStorage.getItem(storageKey) || "{}");
-      return local.sourceHash === payload.sourceHash ? local.annotations || {} : {};
-    } catch { return {}; }
+      return local.sourceHash === payload.sourceHash ? local : null;
+    } catch { return null; }
   }
-  annotations = { ...payload.annotations, ...savedAnnotations() };
+  const saved = savedState();
+  annotations = { ...payload.annotations, ...(saved?.annotations || {}) };
+  pending = { ...(saved?.pending || {}) };
   function setStatus(message) { status.textContent = message; }
+  function updatePending() {
+    const count = Object.keys(pending).length;
+    pendingLabel.textContent = count ? `${count} unsent annotation${count === 1 ? "" : "s"}` : "No unsent annotations";
+    root.querySelector(".flowchart-submit").disabled = count === 0;
+  }
+  async function persistDraft() {
+    const state = { sourceHash: payload.sourceHash, annotations, pending };
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch {}
+    if (typeof window.openai?.setWidgetState === "function") {
+      await window.openai.setWidgetState({ modelContent: state, privateContent: null }).catch(() => {});
+    }
+    updatePending();
+  }
   function theme(name, fallback) {
     return getComputedStyle(root).getPropertyValue(name).trim() || fallback;
   }
@@ -96,23 +123,37 @@
   root.querySelector(".flowchart-save").addEventListener("click", async () => {
     if (!editingStep) return;
     const step = editingStep;
-    const proposed = note.value;
-    const prompt = `Update the editable Mermaid source ${payload.path}: set the %% @annotation JSON comment for step ${step} to ${JSON.stringify(proposed)}, preserving every other step ID, source mapping, and user edit. Rebuild and show the preview inline from that same .mmd file. This annotation is feedback for the flow: ${proposed}`;
-    try {
-      const sent = await requestCodex(prompt, `Save flowchart annotation ${step}`);
-      if (!sent) { setStatus(`Cannot save annotation ${step}: this inline surface cannot send feedback to Codex.`); return; }
-      annotations[step] = proposed;
-      try { localStorage.setItem(storageKey, JSON.stringify({ sourceHash: payload.sourceHash, annotations })); } catch {}
-      if (typeof window.openai?.setWidgetState === "function") {
-        await window.openai.setWidgetState({ modelContent: { sourceHash: payload.sourceHash, annotations }, privateContent: null }).catch(() => {});
-      }
-      markAnnotations();
-      closeEditor();
-      setStatus(`Annotation ${step} sent to Codex for source-file persistence.`);
-    } catch {
-      setStatus(`Cannot save annotation ${step}: feedback could not reach Codex.`);
-    }
+    annotations[step] = note.value;
+    pending[step] = note.value;
+    await persistDraft();
+    markAnnotations();
+    closeEditor();
+    setStatus(`Annotation ${step} saved. Submit annotations to send feedback to the chat.`);
   });
+  root.querySelector(".flowchart-submit").addEventListener("click", async () => {
+    const steps = Object.keys(pending);
+    if (!steps.length) return;
+    const lines = steps.map(step => {
+      const targets = payload.nodes[step]?.code.map(ref => `${ref.path}:${ref.line ?? "planned"}`).join(", ") || "unknown";
+      return `- ${step} (${targets}): ${JSON.stringify(pending[step])}`;
+    });
+    const prompt = `Apply these flowchart annotations to ${payload.path}. Update the matching %% @annotation comments by visible step ID, preserve other edits, and render the revised interactive browser flowchart again.\n${lines.join("\n")}`;
+    try {
+      const sent = await requestCodex(prompt, "Submit flowchart annotations");
+      if (sent) {
+        exportPanel.hidden = true;
+        setStatus(`Requested submission of ${steps.length} annotation${steps.length === 1 ? "" : "s"} to Codex. Confirm the message appears in chat; drafts remain until the .mmd source is updated.`);
+        return;
+      }
+    } catch {}
+    exportText.value = prompt;
+    exportPanel.hidden = false;
+    exportText.focus();
+    exportText.select();
+    try { await navigator.clipboard.writeText(prompt); setStatus("This browser panel cannot send directly to chat. Feedback was copied; paste it into the Codex chat."); }
+    catch { setStatus("This browser panel cannot send directly to chat. Copy the feedback below and paste it into the Codex chat."); }
+  });
+  updatePending();
 
   try {
     const { default: mermaid } = await import("https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs");
@@ -144,7 +185,7 @@
         for (const edge of outgoing(step)) edge.classList.remove("is-outgoing");
       });
       group.addEventListener("contextmenu", event => { event.preventDefault(); openEditor(step, event); });
-      const sourceRef = group.querySelector(".source-ref");
+      const sourceRef = group.querySelector(".source-ref, small");
       if (sourceRef) {
         sourceRef.setAttribute("title", meta.code.map(ref => `${ref.path}:${ref.line ?? "planned"}`).join("\n"));
         sourceRef.setAttribute("role", "button");
@@ -157,7 +198,7 @@
           setStatus(sent ? `Asked Codex to open ${ref.path}:${ref.line}.` : `Source: ${ref.path}:${ref.line}.`);
         });
       } else {
-        issues.push(`Step ${step} needs a blue .source-ref label in its Mermaid node.`);
+        issues.push(`Step ${step} needs a blue source label in its Mermaid node.`);
       }
     }
     markAnnotations();

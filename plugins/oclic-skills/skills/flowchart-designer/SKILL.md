@@ -5,7 +5,7 @@ description: Map an existing class, method, component, or application process as
 
 # flowChartDesigner
 
-Use this skill to explain an existing application flow or design a new one with the user. Keep one `.mmd` file as the source of truth for the diagram, step IDs, code targets, and node feedback. A completed flowchart must render inline in the conversation, from that same file, with the source-reference, hover, and annotation interactions working. Open or deliver a separate browser page only when the user explicitly asks for one. Preserve the user's edits, annotations, and established step IDs when revising it.
+Use this skill to explain an existing application flow or design a new one with the user. Keep one `.mmd` file as the source of truth for the diagram, step IDs, code targets, and node feedback. Open the interactive chart in the Codex browser panel by default; use inline rendering only when the user explicitly asks for it. Preserve the user's edits, annotations, and established step IDs when revising it.
 
 ## Choose the approach
 
@@ -36,20 +36,20 @@ Use yellow for existing nodes whose behavior is proposed to change and green for
 - Use the app's background and foreground colors for nodes and text; dark mode needs dark nodes and light text.
 - Keep a node-to-code map in `.mmd` comments keyed by the visible step ID. Record every relevant verified path and line for existing behavior, or the intended files/types/methods and unresolved decisions for proposed behavior. This map connects later node feedback to implementation work without changing the rendered labels.
 
-## Interactive preview
+## Interactive browser chart
 
-Use the bundled [preview generator](references/interactive-preview.md) and embed its result inline in the response. It renders the `.mmd` source and provides blue source references, node and outgoing-line glow on hover, and a right-click annotation editor. A plain Mermaid block or a separate browser page does not satisfy this skill's deliverable.
+Use the bundled [browser-chart generator](references/interactive-preview.md). It renders the `.mmd` source and provides blue source references, node and outgoing-line glow on hover, and a right-click annotation editor. Each annotation saves as a local draft. Provide a visible **Submit annotations to chat** button that collects all pending notes by step ID and sends them together to this Codex chat.
 
-Persist annotations in the `.mmd` source by the visible step ID, never by a Mermaid-generated SVG ID. Saving a note in the preview sends feedback to Codex; apply it to the source and regenerate the preview. Treat connection changes as feedback too; resolve their affected code targets before implementation.
+Persist submitted annotations in the `.mmd` source by the visible step ID, never by a Mermaid-generated SVG ID. After feedback reaches the chat, apply it to the source and regenerate the browser chart. Treat connection changes as feedback too; resolve their affected code targets before implementation.
 
 If the display supports opening local source files, open the referenced file at its cited line. Otherwise provide a working Codex file link or clearly label an action that requests Codex to open it. Do not present an `Open file` control that only sends an unexplained message.
 
-If the inline surface cannot run any required interaction, try another supported inline implementation. If none works, report the specific blocker and leave the interactive flowchart unverified; do not substitute a static diagram or separate browser page and claim completion. Do not describe browser-only notes as durable source edits.
+Before claiming the submission button works, test its route to the current chat. If the Codex browser panel does not expose a direct chat bridge, the button must present a copyable, step-labeled feedback message and clearly say that the user needs to paste it into chat. Do not claim browser-only drafts are durable source edits or that a copy action submitted a message.
 
 ## Workflow
 
 1. Select the focused-code, system-process, or change-design approach and trace the relevant current behavior.
 2. Write or update the `.mmd` source, preserving user edits and stable step IDs. Mark proposed edits yellow and additions green when designing a change.
-3. Render from that same source. Add the supported interactive behavior above.
-4. Check the inline preview's source reference, hover glow, and right-click annotation behavior. Compare rendered labels with the `.mmd` file; check annotation-to-step and step-to-code mappings, and confirm that existing-code references point to real lines.
-5. Show the diagram inline and link its editable `.mmd` source in the same response. Apply later feedback to that same file and render it inline again.
+3. Build the interactive browser chart from that same source and open it in the Codex browser panel.
+4. Check the source reference, hover glow, right-click editor, local draft persistence, and **Submit annotations to chat** action. Compare rendered labels with the `.mmd` file; check annotation-to-step and step-to-code mappings, and confirm that existing-code references point to real lines.
+5. Show the browser chart and link its editable `.mmd` source in the response. Apply submitted feedback to that same file and regenerate the browser chart.

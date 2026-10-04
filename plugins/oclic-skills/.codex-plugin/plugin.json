@@ -1,6 +1,6 @@
 {
   "name": "oclic-skills",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Codebase analysis, editable flowchart design, staged change explanations and reviews, change staging, commit workflows, delegation, and durable documentation skills for Codex.",
   "author": {
     "name": "Oclick021",

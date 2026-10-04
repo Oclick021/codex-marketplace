@@ -6,7 +6,7 @@ Use the bundled generator when the user expects file references, annotations, or
 python <skill-directory>/scripts/build_preview.py <absolute-flow.mmd> <absolute-writable-preview.html> [--project-root <absolute-repo-root>]
 ```
 
-Use the generated HTML as an in-conversation interactive visualization when the host supports it. In Codex, include `visualize{"path":"<absolute-preview.html>"}` in the final response. Keep the `.mmd` file beside the user's work or in the project documentation; save the HTML in the task's writable visualization directory. Render again after every `.mmd` edit. Do not hand-write a second copy of the diagram in HTML.
+Use the generated HTML as an inline visualization in the conversation. In Codex, include `visualize{"path":"<absolute-preview.html>"}` in the final response, followed by a link to the editable `.mmd` file. The HTML file is an implementation artifact for the inline view, not a separate page to open or send to the user. Do not create or open a browser tab for the chart unless the user explicitly asks for a separate page. Keep the `.mmd` file beside the user's work or in the project documentation; save the HTML in the task's writable visualization directory. Render again after every `.mmd` edit. Do not hand-write a second copy of the diagram in HTML.
 
 ## Mermaid source format
 
@@ -40,4 +40,4 @@ Clicking a blue reference asks Codex to open the cited file and line. If the hos
 
 ## Verification
 
-Open the generated preview and check at least one node of each relevant kind. Confirm that the blue source label and path tooltip appear, node and outgoing edges glow on hover, right-click opens the matching step's editor, saving retains the note after a refresh and sends feedback, and the source link opens or clearly requests the correct file. If any of these fail, fix the preview before presenting it. A static Mermaid block alone does not meet an interactive request.
+Inspect the inline preview and check at least one node of each relevant kind. Confirm that the blue source label and path tooltip appear, node and outgoing edges glow on hover, right-click opens the matching step's editor, saving retains the note after a refresh and sends feedback, and the source link opens or clearly requests the correct file. If any of these fail, fix the preview before presenting it. A static Mermaid block alone does not meet an interactive request; a separate browser page is not the fallback unless the user asks for it.

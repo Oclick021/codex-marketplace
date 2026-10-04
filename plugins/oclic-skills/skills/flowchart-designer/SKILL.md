@@ -5,7 +5,7 @@ description: Map an existing class, method, component, or application process as
 
 # flowChartDesigner
 
-Use this skill to explain an existing application flow or design a new one with the user. Keep one `.mmd` file as the source of truth for the diagram, step IDs, code targets, and node feedback. Render the displayed diagram and any interactive preview from that file. Preserve the user's edits, annotations, and established step IDs when revising it.
+Use this skill to explain an existing application flow or design a new one with the user. Keep one `.mmd` file as the source of truth for the diagram, step IDs, code targets, and node feedback. Render the flowchart inline in the conversation by default, from that same file. Open or deliver a separate browser page only when the user explicitly asks for one. Preserve the user's edits, annotations, and established step IDs when revising it.
 
 ## Choose the approach
 
@@ -38,18 +38,18 @@ Use yellow for existing nodes whose behavior is proposed to change and green for
 
 ## Interactive preview
 
-For an interactive display, use the bundled [preview generator](references/interactive-preview.md). It renders the `.mmd` source and provides blue source references, node and outgoing-line glow on hover, and a right-click annotation editor. Do not substitute a plain Mermaid block when the user asks for these interactions.
+For an interactive display, use the bundled [preview generator](references/interactive-preview.md) and embed its result inline in the response. It renders the `.mmd` source and provides blue source references, node and outgoing-line glow on hover, and a right-click annotation editor. Do not substitute a plain Mermaid block when the user asks for these interactions, or send them to a separate page to use the chart.
 
 Persist annotations in the `.mmd` source by the visible step ID, never by a Mermaid-generated SVG ID. Saving a note in the preview sends feedback to Codex; apply it to the source and regenerate the preview. Treat connection changes as feedback too; resolve their affected code targets before implementation.
 
 If the display supports opening local source files, open the referenced file at its cited line. Otherwise provide a working Codex file link or clearly label an action that requests Codex to open it. Do not present an `Open file` control that only sends an unexplained message.
 
-If the display cannot support a requested interaction, keep the diagram usable and provide the corresponding source references and annotations in a readable fallback. State which interaction is unavailable. Do not claim that unavailable interactions work or that browser-only notes are durable source edits.
+If inline rendering cannot support a requested interaction, show an inline static Mermaid diagram with readable source references and annotations, and state which interaction is unavailable. Do not silently switch to a separate browser page, claim that unavailable interactions work, or describe browser-only notes as durable source edits.
 
 ## Workflow
 
 1. Select the focused-code, system-process, or change-design approach and trace the relevant current behavior.
 2. Write or update the `.mmd` source, preserving user edits and stable step IDs. Mark proposed edits yellow and additions green when designing a change.
 3. Render from that same source. Add the supported interactive behavior above.
-4. Open and test the preview's source reference, hover glow, and right-click annotation behavior. Compare rendered labels with the `.mmd` file; check annotation-to-step and step-to-code mappings, and confirm that existing-code references point to real lines.
-5. Show the diagram and link its editable `.mmd` source. Apply later feedback to that same file and render it again.
+4. Check the inline preview's source reference, hover glow, and right-click annotation behavior. Compare rendered labels with the `.mmd` file; check annotation-to-step and step-to-code mappings, and confirm that existing-code references point to real lines.
+5. Show the diagram inline and link its editable `.mmd` source in the same response. Apply later feedback to that same file and render it inline again.

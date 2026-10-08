@@ -1,0 +1,4 @@
+interface:
+  display_name: "ReviewImplementation"
+  short_description: "Review the implementation just completed in this chat"
+  default_prompt: "Use $reviewImplementation to review the implementation just completed in this chat."

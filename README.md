@@ -12,6 +12,8 @@ This repository is a Codex plugin marketplace containing the `oclic-skills` plug
 - `stage` — group related changes and stage coherent pieces without committing.
 - `explain_staged` — explain staged changes, how they work, and how they relate.
 - `review_staged` — review staged changes for actionable bugs and risks.
+- `reviewImplementation` — review the implementation just completed in the current chat.
+- `reviewCode` — review code identified in the prompt; ask which code when no target is given.
 - `commit-and-push` — create categorized commits and push the current branch safely.
 - `commit-and-deploy` — version, commit, and deploy through the project's verified release procedure.
 - `document` — persist verified application knowledge into the project's documentation store.

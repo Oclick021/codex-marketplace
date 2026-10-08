@@ -1,7 +1,7 @@
 {
   "name": "oclic-skills",
   "version": "0.1.6",
-  "description": "Codebase analysis, editable flowchart design, staged change explanations and reviews, change staging, commit workflows, delegation, and durable documentation skills for Codex.",
+  "description": "Codebase analysis, editable flowchart design, implementation and selected-code reviews, staged change explanations and reviews, change staging, commit workflows, delegation, and durable documentation skills for Codex.",
   "author": {
     "name": "Oclick021",
     "url": "https://github.com/Oclick021"
@@ -13,7 +13,7 @@
   "interface": {
     "displayName": "Oclic Skills",
     "shortDescription": "Analyze code, design flowcharts, manage commits, and preserve knowledge.",
-    "longDescription": "Adds deep class, endpoint, Razor UI, and method analysis; editable flowcharts for current and proposed application processes; staged change explanations and reviews; grouped change staging; categorized commit, push, and deployment workflows; durable project documentation; task handoff; and separate-task or subagent delegation with wait and continue modes.",
+    "longDescription": "Adds deep class, endpoint, Razor UI, and method analysis; editable flowcharts for current and proposed application processes; reviews of the latest implementation or selected code; staged change explanations and reviews; grouped change staging; categorized commit, push, and deployment workflows; durable project documentation; task handoff; and separate-task or subagent delegation with wait and continue modes.",
     "developerName": "oclic",
     "category": "Productivity",
     "capabilities": ["Write"],

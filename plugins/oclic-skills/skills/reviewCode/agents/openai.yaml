@@ -1,0 +1,4 @@
+interface:
+  display_name: "ReviewCode"
+  short_description: "Review selected code or ask for the review target"
+  default_prompt: "Use $reviewCode to review the code I identify in this prompt."

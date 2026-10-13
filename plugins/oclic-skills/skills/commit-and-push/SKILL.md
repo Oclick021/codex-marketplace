@@ -7,6 +7,8 @@ description: Review and categorize repository changes, create focused Git commit
 
 Create meaningful commits from the current repository changes and push them safely.
 
+Before staging or preparing commits, read and follow [agent coordination](../commit/references/coordination.md). Acquire the shared repository commit lock, wait while another agent owns it, refresh Git state after acquisition, and hold it through commit verification and push. Release it during cleanup.
+
 ## Workflow
 
 1. Read applicable `AGENTS.md` files. Inspect `git status`, the current branch, staged and unstaged diffs, remotes, upstream configuration, and recent commit-message conventions.

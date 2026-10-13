@@ -26,6 +26,8 @@ This repository is a Codex plugin marketplace containing the `oclic-skills` plug
 
 ## Install from a cloned repository
 
+Commit workflows and `stage` share a repository lock to coordinate multiple agents. They wait for the current owner, refresh Git state after acquiring the lock, and release it after their protected work finishes.
+
 ```text
 git clone https://github.com/Oclick021/codex-marketplace.git
 codex plugin marketplace add <path-to-cloned-codex-marketplace>

@@ -7,6 +7,8 @@ description: Prepare categorized Git commits and execute the repository's verifi
 
 Commit the current changes and follow the project's established deployment procedure.
 
+Before modifying version files, staging, or preparing commits, read and follow [agent coordination](../commit/references/coordination.md). Acquire the shared repository commit lock, wait while another agent owns it, refresh Git state after acquisition, and hold it through verification and synchronous release commands. Release it during cleanup.
+
 ## Discover the deployment contract
 
 Read applicable `AGENTS.md` files and inspect CI workflows, build and packaging scripts, version manifests, release configuration, and recent deployment commits. Identify:

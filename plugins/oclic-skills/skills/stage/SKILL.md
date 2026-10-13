@@ -7,6 +7,8 @@ description: Review current Git changes, group related files or hunks by purpose
 
 Review the current repository changes, identify which pieces belong together, and stage each coherent group. Do not create a commit, push, or deploy.
 
+Before changing the index, read and follow [agent coordination](../commit/references/coordination.md). Use the same repository commit lock as the commit skills, wait while another agent owns it, refresh Git state after acquisition, and release after staging and verification. This prevents staging into another agent's in-progress commit.
+
 ## Workflow
 
 1. Read applicable `AGENTS.md` files. Inspect the repository root, current branch, `git status`, staged and unstaged diffs, and recent history when it helps explain the changes.

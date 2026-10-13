@@ -7,6 +7,8 @@ description: Review and categorize repository changes and create focused local G
 
 Turn the current repository changes into safe, meaningful local commits. Do not push or deploy.
 
+Before staging or preparing commits, read and follow [agent coordination](references/coordination.md). Acquire the shared repository commit lock, wait while another agent owns it, refresh Git state after acquisition, and release it during cleanup.
+
 ## Shared workflow
 
 1. Read the repository's applicable `AGENTS.md` files and inspect `git status`, the current branch, staged and unstaged diffs, and recent commit-message conventions.

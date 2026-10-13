@@ -13,7 +13,7 @@
   "interface": {
     "displayName": "Oclic Skills",
     "shortDescription": "Analyze code, design flowcharts, manage commits, and preserve knowledge.",
-    "longDescription": "Adds deep class, endpoint, Razor UI, and method analysis; editable flowcharts for current and proposed application processes; reviews of the latest implementation or selected code; staged change explanations and reviews; grouped change staging; categorized commit, push, and deployment workflows; durable project documentation; task handoff; and separate-task or subagent delegation with wait and continue modes.",
+    "longDescription": "Adds deep class, endpoint, Razor UI, and method analysis; editable flowcharts for current and proposed application processes; reviews of the latest implementation or selected code; staged change explanations and reviews; grouped change staging; categorized commit, push, and deployment workflows; durable project documentation; a document, local commit, and chat archive sequence; task handoff; and separate-task or subagent delegation with wait and continue modes.",
     "developerName": "oclic",
     "category": "Productivity",
     "capabilities": ["Write"],

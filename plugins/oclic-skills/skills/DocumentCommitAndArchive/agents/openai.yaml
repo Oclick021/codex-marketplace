@@ -1,0 +1,4 @@
+interface:
+  display_name: "DocumentCommitAndArchive"
+  short_description: "Document, commit locally, then archive the current chat"
+  default_prompt: "Use $DocumentCommitAndArchive to document this chat's durable knowledge, commit its changes locally, then archive this chat."
